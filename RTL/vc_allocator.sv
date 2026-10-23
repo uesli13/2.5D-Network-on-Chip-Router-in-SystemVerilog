@@ -241,8 +241,12 @@ module vc_allocator #(
                     end                          
                     if (escape_port_set[up_port][up_vc][down_port]) begin
                         for (int down_vc = 0; down_vc < VC_NUM; down_vc = down_vc + 1) begin
+`ifdef MUT_SV_VC
+                            class_valid_escape = (down_vc == ADAPTIVE);
+`else
                             class_valid_escape = (down_vc == ESCAPE) ||
                                                  ((ADAPTIVE_TIMEOUT == 0) && (down_vc == ADAPTIVE)); // XY uses both classes when timeout is zero
+`endif
                             if (is_available_vc_i[down_port][down_vc] && credits[down_port][down_vc] && class_valid_escape) begin
                                 eligible_vc_set_escape[up_port][up_vc][down_port][down_vc] = 1'b1;
                             end

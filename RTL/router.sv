@@ -41,8 +41,13 @@ module router #(
     assign router_if_local_up.is_valid = is_valid_out[LOCAL];
     assign router_if_north_up.is_valid = is_valid_out[NORTH];
     assign router_if_south_up.is_valid = is_valid_out[SOUTH];
+    
+`ifdef MUT_SB_LEFTOVER
+    // MUTATION: TAIL flits never get is_valid on the WEST output
+    assign router_if_west_up.is_valid  = is_valid_out[WEST] && (data_out[WEST].flit_label != TAIL);
+`else
     assign router_if_west_up.is_valid  = is_valid_out[WEST];
-    assign router_if_east_up.is_valid  = is_valid_out[EAST];
+`endif    assign router_if_east_up.is_valid  = is_valid_out[EAST];
 
     assign credits_in[LOCAL] = router_if_local_up.credits;
     assign credits_in[NORTH] = router_if_north_up.credits;

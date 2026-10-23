@@ -17,6 +17,11 @@ module crossbar(
         begin
             if (sa_if.valid_flit[out_port]) begin
                 data_o[out_port] = ib_if.flit[sa_if.input_port_sel[out_port]];
+`ifdef MUT_SB_DATA
+                // MUTATION: flip bit 0 of the payload of BODY flits
+                if (data_o[out_port].flit_label == BODY)
+                    data_o[out_port].data.bt_pl[0] = ~data_o[out_port].data.bt_pl[0];
+`endif
             end
             else begin
                 data_o[out_port] = '0;
