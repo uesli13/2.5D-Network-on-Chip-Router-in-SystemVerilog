@@ -241,7 +241,7 @@ module vc_allocator #(
                     end                          
                     if (escape_port_set[up_port][up_vc][down_port]) begin
                         for (int down_vc = 0; down_vc < VC_NUM; down_vc = down_vc + 1) begin
-`ifdef MUT_SV_VC
+`ifdef MUT_SB_VC
                             class_valid_escape = (down_vc == ADAPTIVE);
 `else
                             class_valid_escape = (down_vc == ESCAPE) ||

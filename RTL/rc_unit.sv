@@ -53,7 +53,14 @@ module rc_unit #(
             go_east = (x_dest_i > X_CUR);
             stay_local = (x_dest_i == X_CUR) && (y_dest_i == Y_CUR);
 
-            
+`ifdef MUT_SB_ROUTE_XY
+            // MUTATION: YX instead of XY (Y dimension resolved first)
+            if      (go_north) escape_port_set[NORTH] = 1'b1;
+            else if (go_south) escape_port_set[SOUTH] = 1'b1;
+            else if (go_west)  escape_port_set[WEST]  = 1'b1;
+            else if (go_east)  escape_port_set[EAST]  = 1'b1;
+            else               escape_port_set[LOCAL] = 1'b1;
+`else
             //ESCAPE OUTPORT MASK SET
             if (go_west) begin
                 escape_port_set[WEST] = 1'b1; // Only WEST is eligible
@@ -70,9 +77,15 @@ module rc_unit #(
             else begin
                 escape_port_set[LOCAL] = 1'b1; // Only LOCAL is eligible
             end
+`endif
 
             //ADAPTIVE OUTPORT MASK SET
+`ifdef MUT_SB_ROUTE_ADAPT
+            // MUTATION: moving west is offered as EAST (non-minimal port)
+            if (go_west)  adaptive_port_set[EAST]  = 1'b1;
+`else
             if (go_west)  adaptive_port_set[WEST]  = 1'b1;
+`endif
             if (go_east)  adaptive_port_set[EAST]  = 1'b1;
             if (go_north) adaptive_port_set[NORTH] = 1'b1;
             if (go_south) adaptive_port_set[SOUTH] = 1'b1;
