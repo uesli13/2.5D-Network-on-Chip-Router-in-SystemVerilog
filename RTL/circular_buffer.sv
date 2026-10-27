@@ -27,6 +27,16 @@ module circular_buffer #(
     logic [POINTER_SIZE:0] num_flits;
     logic [POINTER_SIZE:0] num_flits_next;
 
+`ifdef MUT_SB_EXTRA
+    // MUTATION: the first BODY flit read from this buffer is read twice
+    logic dup_done;
+    always_ff @(posedge clk or posedge rst)
+        if (rst)
+            dup_done <= 1'b0;
+        else if (read_i && memory[read_ptr].flit_label == BODY)
+            dup_done <= 1'b1;
+`endif
+
   	assign is_empty = (num_flits == 0);
   	assign is_full = (num_flits == BUFFER_SIZE);
     assign peek_o = is_empty ? '0 : memory[read_ptr];
@@ -100,6 +110,14 @@ module circular_buffer #(
             write_ptr_next = write_ptr;
             num_flits_next = num_flits;
         end
+
+`ifdef MUT_SB_EXTRA
+        if (read_i && !dup_done && memory[read_ptr].flit_label == BODY) begin
+            read_ptr_next  = read_ptr;                    // no pop: the same flit is read again
+            num_flits_next = num_flits + (write_i ? 1 : 0);
+        end
+`endif
+
     end
 
     function logic [POINTER_SIZE-1:0] increase_ptr (input logic [POINTER_SIZE-1:0] ptr);
