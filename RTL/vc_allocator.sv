@@ -190,7 +190,9 @@ module vc_allocator #(
                     ib_if.vc_new[up_port][up_vc] = down_vc[VC_SIZE-1:0]; // Output the allocated VC number to the input block
                     ib_if.port_new[up_port][up_vc] = port_t'(down_port); // Output the allocated port number to the input block
                     ib_if.vc_valid[up_port][up_vc] = 1'b1;
+`ifndef MUT_SB_INTERLEAVE
                     is_available_vc_next[down_port][down_vc] = 1'b0;
+`endif
                     end  
                 end
             end
