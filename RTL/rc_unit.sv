@@ -80,7 +80,7 @@ module rc_unit #(
 `endif
 
             //ADAPTIVE OUTPORT MASK SET
-`ifdef MUT_SB_ROUTE_ADAPT
+`ifdef MUT_SB_ROUTE_MIN
             // MUTATION: moving west is offered as EAST (non-minimal port)
             if (go_west)  adaptive_port_set[EAST]  = 1'b1;
 `else
